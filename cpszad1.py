@@ -1,6 +1,8 @@
 import numpy as np
 
 import matplotlib.pyplot as plt
+import matplotlib
+from scipy.signal import periodogram
 frequency =50
 AMPL= 230
 duration = 0.1
@@ -121,10 +123,7 @@ plt.plot(t, cosinuses[19], label="95Hz, i = 19")
 plt.plot(t, cosinuses[21], label="105Hz, i = 21")
 plt.legend()
 
-import numpy as np
 
-import matplotlib.pyplot as plt
-import matplotlib
 freq_s = 10000
 freq_n = 50
 freq_m = 1
@@ -142,3 +141,48 @@ plt.plot(t,syg_zmod,label="sygnal zmodulowany")
 plt.plot(t,sygnal,label="sygnal przed")
 plt.legend()
 
+
+freq_s = 10000
+freq_n = 50
+freq_m = 1
+depth_m = 5
+
+t = np.linspace(0,1,freq_s)
+sygnal_mod = depth_m*np.sin(2*np.pi*freq_m*t)
+syg_zmod = np.cos(2*np.pi*freq_n*t + sygnal_mod)
+sygnal = np.cos(2*np.pi*freq_n*t)
+
+
+plt.figure()
+plt.plot(t,syg_zmod,label="sygnal zmodulowany")
+#plt.plot(t,sygnal_mod,label="sygnal modulujacy")
+plt.plot(t,sygnal,label="sygnal przed")
+plt.legend()
+
+## 
+
+freq_p = 25
+
+t2 = np.linspace(0,1,freq_p)
+
+sygnal_mod2 = depth_m*np.sin(2*np.pi*freq_m*t2)
+syg_zmod2 = np.cos(2*np.pi*freq_n*t2 + sygnal_mod2)
+sygnal2 = np.cos(2*np.pi*freq_n*t2)
+error = syg_zmod - np.interp(t, t2, syg_zmod2)
+plt.figure()
+plt.plot(t2,syg_zmod2,label="sygnal zmodulowany 25Hz")
+plt.plot(t,syg_zmod,label="sygnal zmodulowany")
+plt.plot(t,error,label="bledy")
+plt.legend()
+
+freq1, power1 = periodogram(syg_zmod,10000)
+freq2, power2 = periodogram(syg_zmod2,25)
+
+plt.figure()
+plt.xlim(0,100)
+plt.plot(freq1,power1,label="MOC zmodulowany 10kHz")
+plt.legend()
+plt.figure()
+plt.xlim(0,12)
+plt.plot(freq2,power2,label="MOC zmodulowany 25Hz")
+plt.legend()
